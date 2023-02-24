@@ -13,10 +13,14 @@ public class PlayerMovementHandler : MonoBehaviour
     [SerializeField] private float playerJump = 3.0f;
     [SerializeField] private float playerGravity = 9.81f;
     [SerializeField] private Transform cameraTransform;
+    [SerializeField] private GameObject scoreHandler;
+
+    [SerializeField] private float sprintMult = 1;
 
     private void Start()
     {
         playerController = gameObject.AddComponent<CharacterController>(); // add character controller component
+
     }
 
     void Update()
@@ -33,15 +37,17 @@ public class PlayerMovementHandler : MonoBehaviour
         var angledMovement = cameraTransform.rotation * playerMovement; // multiply by camera rotation
         angledMovement.y = 0; // set vertical movement from camera to 0
 
-        playerController.Move(angledMovement * Time.deltaTime * playerSpeed); // move player horizontally
 
-        /* 
-          if (angledMovement != Vector3.zero) // if input isn't zero in all directions
+        // SPRINT
+        if (Input.GetButton("Sprint") && playerGrounded) // if shift pressed and on ground
         {
-            gameObject.transform.forward = angledMovement; // find forward direction
+            sprintMult = 1.5f; // increase player speed
+        }
+        else {
+            sprintMult = 1;
         }
 
-         */
+        playerController.Move(angledMovement * Time.deltaTime * (playerSpeed * sprintMult)); // move player horizontally
 
         // JUMPING
         if (Input.GetButtonDown("Jump") && playerGrounded) // if jump pressed and on ground
@@ -51,5 +57,11 @@ public class PlayerMovementHandler : MonoBehaviour
 
         playerVelocity.y -= playerGravity * Time.deltaTime; // move player downwards for gravity
         playerController.Move(playerVelocity * Time.deltaTime); // move player controller
+    }
+
+    private void OnTriggerEnter(Collider other) {
+        if (other.gameObject.CompareTag("Pickup")) {
+            scoreHandler.GetComponent<ScoreHandler>().IncreaseScore(other.gameObject.GetComponent<Pickup>().GetPickedUp());
+        }
     }
 }
