@@ -5,13 +5,13 @@ using UnityEngine;
 public class PlayerMovementHandler : MonoBehaviour
 {
     private CharacterController playerController;
-    private Vector3 playerVelocity;
+    //private float playerVelocity;
     private bool playerGrounded;
 
 
     [SerializeField] private float playerSpeed = 3.0f;
-    [SerializeField] private float playerJump = 3.0f;
-    [SerializeField] private float playerGravity = 9.81f;
+    //[SerializeField] private float playerJump = 3.0f;
+    // [SerializeField] private float playerGravity;
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private GameObject scoreHandler;
 
@@ -20,47 +20,57 @@ public class PlayerMovementHandler : MonoBehaviour
     private void Start()
     {
         playerController = gameObject.AddComponent<CharacterController>(); // add character controller component
-
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        playerGrounded = playerController.isGrounded; // check if player is on ground
-        if (playerGrounded && playerVelocity.y < 0) // if player is on ground and not moving vertically already
-        {
-            playerVelocity.y = 0f; // set player vertical velocity to zero
-        }
-
         // HORIZONTAL MOVEMENT
         Vector3 playerMovement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")); // get left/right and up/down from input, add to vector
 
         var angledMovement = cameraTransform.rotation * playerMovement; // multiply by camera rotation
-        angledMovement.y = 0; // set vertical movement from camera to 0
-
+        angledMovement.y = -5.0f;
 
         // SPRINT
-        if (Input.GetButton("Sprint") && playerGrounded) // if shift pressed and on ground
+        if (Input.GetButton("Sprint")) // if shift pressed
         {
             sprintMult = 1.5f; // increase player speed
         }
-        else {
+        else
+        {
             sprintMult = 1;
         }
 
         playerController.Move(angledMovement * Time.deltaTime * (playerSpeed * sprintMult)); // move player horizontally
 
-        // JUMPING
+        // JUMPING (IMPLEMENT IF TIME ALLOWS)
+
+        /*  playerGrounded = playerController.isGrounded; // check if player is on ground
+        Debug.Log("onGround? " + playerController.isGrounded);
+
         if (Input.GetButtonDown("Jump") && playerGrounded) // if jump pressed and on ground
         {
-            playerVelocity.y += Mathf.Sqrt(playerJump * playerGravity); // increase velocity by square root of jump value times gravity
+            Debug.Log("Jump?");
+            playerVelocity.y += Mathf.Sqrt(playerJump * -2 * playerGravity); // increase velocity by jump height
         }
 
-        playerVelocity.y -= playerGravity * Time.deltaTime; // move player downwards for gravity
-        playerController.Move(playerVelocity * Time.deltaTime); // move player controller
+        if (playerGrounded && playerVelocity.y < 0)
+        {
+            playerVelocity.y = 0.0f; 
+        }
+
+        playerVelocity.y += (playerGravity * Time.deltaTime); // move player downwards for gravity
+
+
+        playerController.Move(playerVelocity * Time.deltaTime); // move player vertically
+
+
+        */
     }
 
-    private void OnTriggerEnter(Collider other) {
-        if (other.gameObject.CompareTag("Pickup")) {
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.CompareTag("Pickup"))
+        {
             scoreHandler.GetComponent<ScoreHandler>().IncreaseScore(other.gameObject.GetComponent<Pickup>().GetPickedUp());
         }
     }
