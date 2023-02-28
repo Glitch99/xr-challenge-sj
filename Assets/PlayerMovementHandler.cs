@@ -17,20 +17,18 @@ public class PlayerMovementHandler : MonoBehaviour
 
     [SerializeField] private float sprintMult = 1;
 
+    private Vector3 playerMovement;
+
     private void Start()
     {
         playerController = gameObject.AddComponent<CharacterController>(); // add character controller component
     }
 
-    void FixedUpdate()
-    {
-        // HORIZONTAL MOVEMENT
-        Vector3 playerMovement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")); // get left/right and up/down from input, add to vector
+    void Update() {
+        // Get Input
+        playerMovement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")); // get left/right and up/down from input, add to vector
 
-        var angledMovement = cameraTransform.rotation * playerMovement; // multiply by camera rotation
-        angledMovement.y = -5.0f;
 
-        // SPRINT
         if (Input.GetButton("Sprint")) // if shift pressed
         {
             sprintMult = 1.5f; // increase player speed
@@ -39,6 +37,17 @@ public class PlayerMovementHandler : MonoBehaviour
         {
             sprintMult = 1;
         }
+    }
+
+    void FixedUpdate()
+    {
+        // HORIZONTAL MOVEMENT
+      
+
+        var angledMovement = cameraTransform.rotation * playerMovement; // multiply by camera rotation
+        angledMovement.y = -5.0f;
+
+        
 
         playerController.Move(angledMovement * Time.deltaTime * (playerSpeed * sprintMult)); // move player horizontally
 
@@ -71,7 +80,24 @@ public class PlayerMovementHandler : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Pickup"))
         {
-            scoreHandler.GetComponent<ScoreHandler>().IncreaseScore(other.gameObject.GetComponent<Pickup>().GetPickedUp());
+            pickupStar(other.gameObject);
+        }
+        else if (other.gameObject.CompareTag("EndZone")) {
+            if (scoreHandler.GetComponent<ScoreHandler>().AllPickupsCollected()) { 
+                endGame();
+            }
         }
     }
+
+    private void pickupStar(GameObject star) {
+        scoreHandler.GetComponent<ScoreHandler>().IncreaseScore(star.GetComponent<Pickup>().GetPickedUp());
+        star.GetComponent<CapsuleCollider>().enabled = false;
+    }
+
+    private void endGame()
+    {
+        Debug.Log("Game Over");
+        Application.Quit();
+    }
+
 }
