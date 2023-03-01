@@ -15,7 +15,7 @@ public class cameraHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        Cursor.visible = false;
     }
 
     // Update is called once per frame
@@ -32,11 +32,12 @@ public class cameraHandler : MonoBehaviour
         if (cam.fieldOfView < 10) { cam.fieldOfView = 10; }
         if (cam.fieldOfView > 90) { cam.fieldOfView = 90; }
 
-        
 
         // Horizontal
         cameraY = Input.GetAxis("Mouse X");
           
         transform.RotateAround(playerLocation, new Vector3(0, cameraY, 0), Time.deltaTime * 5 * cameraSensitivity);
+
+       
     }
 }
