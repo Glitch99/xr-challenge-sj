@@ -30,9 +30,10 @@ public class EndZoneScript : MonoBehaviour
                 blockCircle.SetActive(false);
                 enterCircle.SetActive(true);
                 endFire.SetActive(true);
+
             }
-            // Rotate the object around Z
-            enterCircle.transform.Rotate(new Vector3(0, spinSpeed, 0), Space.Self);
+                // Rotate the object around Z
+                enterCircle.transform.Rotate(new Vector3(0, spinSpeed, 0), Space.Self);
         }
     }
 }

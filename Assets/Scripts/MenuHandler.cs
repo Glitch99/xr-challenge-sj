@@ -45,7 +45,7 @@ public class MenuHandler : MonoBehaviour
 
     public void LoadWinScreen()
     {
-        SceneManager.LoadScene(sceneName: "WinScreen");
+        SceneManager.LoadScene(sceneName: "GameWinScene");
     }
 
     public void LoadCredits()
