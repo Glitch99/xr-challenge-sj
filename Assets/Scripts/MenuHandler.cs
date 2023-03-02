@@ -12,22 +12,16 @@ public class MenuHandler : MonoBehaviour
     void Start()
     {
         if (scoreText) {
-            int playerWon = 1;//PlayerPrefs.GetInt("playerWon");
             int playerScore = PlayerPrefs.GetInt("score");
-            if (playerWon == 0)
-            {
+            Scene currentScene = SceneManager.GetActiveScene();
+            if (currentScene.buildIndex == 2)// Game Over
+            {   
+
                 scoreText.text = "Score: " + playerScore.ToString();
-            }
-            else { 
+            } else if (currentScene.buildIndex == 3){ // Game Win       
                 scoreText.text = "You Found All The Stars!<br>Final Score: " + playerScore.ToString();
             }   
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void LoadGame() {
