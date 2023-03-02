@@ -6,7 +6,8 @@ public class cameraHandler : MonoBehaviour
 {
     [SerializeField] private GameObject player;
     [SerializeField] private Camera cam;
-    private Vector3 playerLocation;
+    [SerializeField] private bool isMenu;
+    private Vector3 targetLocation;
 
     private float cameraY;
 
@@ -15,29 +16,40 @@ public class cameraHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Cursor.visible = false;
+        if (isMenu) { 
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.visible = false;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        playerLocation = player.transform.position; // Get player's coords
-        transform.LookAt(playerLocation); // Lock camera to player
+        targetLocation = player.transform.position; // Get player's coords
+        transform.LookAt(targetLocation); // Lock camera to player
 
-        var camZoom = Input.GetAxis("Mouse ScrollWheel");
-        camZoom *= -1;
-        camZoom *= (cameraSensitivity / 5);
+        if (!isMenu)
+        {
+            var camZoom = Input.GetAxis("Mouse ScrollWheel");
+            camZoom *= -1;
+            camZoom *= (cameraSensitivity / 5);
 
-        cam.fieldOfView += camZoom;
-        if (cam.fieldOfView < 10) { cam.fieldOfView = 10; }
-        if (cam.fieldOfView > 90) { cam.fieldOfView = 90; }
+            cam.fieldOfView += camZoom;
+            if (cam.fieldOfView < 10) { cam.fieldOfView = 10; }
+            if (cam.fieldOfView > 90) { cam.fieldOfView = 90; }
 
 
-        // Horizontal
-        cameraY = Input.GetAxis("Mouse X");
-          
-        transform.RotateAround(playerLocation, new Vector3(0, cameraY, 0), Time.deltaTime * 5 * cameraSensitivity);
+            // Horizontal
+            cameraY = Input.GetAxis("Mouse X");
+        }
+        else {
+            cameraY = .1f;
+        }
 
-       
+        transform.RotateAround(targetLocation, new Vector3(0, cameraY, 0), Time.deltaTime * 5 * cameraSensitivity);
+
     }
 }

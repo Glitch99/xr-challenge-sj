@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScoreHandler : MonoBehaviour
+public class ScoreHandler: MonoBehaviour
 {
     public int playerScore;
     [SerializeField] public TMP_Text countText;
@@ -12,9 +12,6 @@ public class ScoreHandler : MonoBehaviour
     private bool GameOver;
     private int pickupTotal;
     private int pickupCount;
-    [SerializeField] public GameObject endZone;
-
-
 
     // Start is called before the first frame update
     void Start()
@@ -26,20 +23,39 @@ public class ScoreHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        countText.text = "Score: " + playerScore.ToString() + "<br>Pickups Collected: " + pickupCount.ToString() + " / " + pickupTotal.ToString();
-
+        if (!AllPickupsCollected())
+        {
+            countText.text = "Score: " + playerScore.ToString();
+        }
+        else
+        {
+            countText.text = "All Pickups Collected! Score: " + playerScore.ToString();
+        }
     }
 
-    public void IncreaseScore(int increment) {
+    public void IncreaseScore(int increment)
+    {
         playerScore += increment;
         pickupCount++;
     }
 
-    public bool AllPickupsCollected() {
+    public bool AllPickupsCollected()
+    {
         if (pickupCount == pickupTotal)
         {
             return true;
         }
         return false;
     }
+
+    void OnDisable()
+    {
+        PlayerPrefs.SetInt("score", playerScore);
+        int p1 = 0;
+        if (AllPickupsCollected()) {
+            p1 = 1;
+        }
+        PlayerPrefs.SetInt("playerWon", p1);
+    }
+
 }
